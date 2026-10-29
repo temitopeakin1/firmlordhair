@@ -26,7 +26,14 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-require __DIR__ . '/config.php';
+$configFile = __DIR__ . '/config.php';
+if (!is_file($configFile)) {
+    http_response_code(500);
+    header('Content-Type: text/plain; charset=utf-8');
+    echo "Missing includes/config.php.\nCopy includes/config.example.php to includes/config.php and set your database and studio password.\n";
+    exit;
+}
+require $configFile;
 require __DIR__ . '/db.php';
 require __DIR__ . '/catalog.php';
 require __DIR__ . '/cart.php';

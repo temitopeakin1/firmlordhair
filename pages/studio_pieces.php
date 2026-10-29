@@ -88,8 +88,8 @@ $authed = studio_ok();
 ?>
 <section class="page-hero">
     <div class="narrow">
-        <p class="eyebrow">Studio</p>
-        <h1><?= $authed ? 'Pieces' : 'Studio desk' ?></h1>
+        <p class="eyebrow">Admin Studio</p>
+        <h1><?= $authed ? 'Hair Extensions & Products' : 'Studio desk' ?></h1>
         <?php if (!$authed): ?>
             <p class="lede">Sign in to edit the shop.</p>
             <form class="form" method="post" action="<?= e(url('studio')) ?>">
@@ -114,8 +114,9 @@ $authed = studio_ok();
             <a class="is-on" href="<?= e(url('studio/pieces')) ?>">Pieces</a>
         </nav>
         <article class="photo-card">
+            <div class="photo-preview" aria-hidden="true"></div>
             <div>
-                <h2>New piece</h2>
+                <h3>New piece</h3>
                 <?php piece_edit_form(); ?>
             </div>
         </article>

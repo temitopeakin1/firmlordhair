@@ -289,7 +289,34 @@ function all_product_photos(): array
 function product_photos(string $slug): array
 {
     $photos = all_product_photos()[$slug] ?? [];
+    if ($photos === []) {
+        $photos = product_photos_from_disk($slug);
+    }
     ksort($photos);
+    return $photos;
+}
+
+/** Use files in assets/images/products when the DB has no photo rows (common after deploy). */
+function product_photos_from_disk(string $slug): array
+{
+    $slug = preg_replace('/[^a-z0-9-]/', '', strtolower($slug)) ?? '';
+    if ($slug === '') {
+        return [];
+    }
+    $dir = dirname(__DIR__) . '/assets/images/products';
+    if (!is_dir($dir)) {
+        return [];
+    }
+    $photos = [];
+    foreach ([0, 1, 2] as $slot) {
+        foreach (['jpg', 'png', 'webp'] as $ext) {
+            $filename = $slug . '-' . $slot . '.' . $ext;
+            if (is_file($dir . '/' . $filename)) {
+                $photos[$slot] = $filename;
+                break;
+            }
+        }
+    }
     return $photos;
 }
 

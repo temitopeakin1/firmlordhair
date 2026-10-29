@@ -31,7 +31,7 @@
             </section>
             <section>
                 <h2>Store Email</h2>
-                <p><a href="mailto:<?= e(SITE_EMAIL) ?>"><?= e(SITE_EMAIL) ?></a></p>
+                <p><a href="mailto:<?= e(SITE_EMAIL) ?>"><?= e(SITE_EMAIL) ?></a><br><a href="mailto:ladyfirmlord@gmail.com">ladyfirmlord@gmail.com</a></p>
             </section>
             <section>
                 <h2>Phone Number</h2>

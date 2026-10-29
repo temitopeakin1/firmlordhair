@@ -209,16 +209,37 @@ function render_page(array $resolved): void
     http_response_code((int) $resolved['status']);
     $data = $resolved['data'];
     $view = basename((string) $resolved['view']);
-    $file = dirname(__DIR__) . '/pages/' . $view . '.php';
+    $pagesDir = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'pages';
+    $file = $pagesDir . DIRECTORY_SEPARATOR . $view . '.php';
     if (!is_file($file)) {
         http_response_code(404);
-        $view = 'missing';
-        $file = dirname(__DIR__) . '/pages/missing.php';
         $data['title'] = 'Page not found';
+        $data['missing_view'] = $view;
+        $file = $pagesDir . DIRECTORY_SEPARATOR . 'missing.php';
     }
     extract($data, EXTR_SKIP);
     require __DIR__ . '/layout_top.php';
-    require $file;
+    if (is_file($file)) {
+        require $file;
+    } else {
+        $found = [];
+        if (is_dir($pagesDir)) {
+            foreach (scandir($pagesDir) ?: [] as $name) {
+                if (str_ends_with($name, '.php')) {
+                    $found[] = $name;
+                }
+            }
+        }
+        $asked = htmlspecialchars((string) ($missing_view ?? $view), ENT_QUOTES, 'UTF-8');
+        $list = $found ? htmlspecialchars(implode(', ', $found), ENT_QUOTES, 'UTF-8') : 'none (folder empty or missing)';
+        echo '<section class="page-hero"><div class="narrow">';
+        echo '<p class="eyebrow">Server upload</p>';
+        echo '<h1>pages/' . $asked . '.php is missing</h1>';
+        echo '<p class="lede">The site loaded the header, but PHP files under <code>public_html/pages/</code> are incomplete.</p>';
+        echo '<p class="lede">Currently in that folder: <code>' . $list . '</code></p>';
+        echo '<p class="lede">In cPanel File Manager, upload your local <code>pages</code> folder (all .php files) into <code>public_html/pages/</code>.</p>';
+        echo '</div></section>';
+    }
     require __DIR__ . '/layout_end.php';
     take_form_state();
 }
